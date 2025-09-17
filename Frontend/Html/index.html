@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Metadata and Styles -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Management System</title>
+  <link rel="stylesheet" href="../Css/style1.css"/>
+</head>
+<body>
+
+<!-- 🌐 NAVBAR START -->
+<nav class="navbar">
+  <div class="nav-container">
+    <!-- Brand -->
+    <a href="#" class="nav-brand" onclick="showSection('home-section')">🎪 EventHub</a>
+
+    <!-- Navigation Menu -->
+    <ul class="nav-menu" id="nav-menu">
+      <li class="nav-item"><a class="nav-link active" onclick="setActiveNav(this); showSection('home-section')">🏠 Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="setActiveNav(this); showSection('create-event-section')">➕ Create Event</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="setActiveNav(this); showSection('register-attendee-section')">🧾 Register</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="setActiveNav(this); showSection('list-attendees-section')">👥 Attendees</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="setActiveNav(this); showSection('add-organizer-section')">🧑‍💼 Organizer</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="setActiveNav(this); showSection('add-venue-section')">🏟️ Venue</a></li>
+    </ul>
+    <button id="darkModeToggle" class="dark-toggle-btn" aria-label="Toggle dark mode">🌙</button>
+
+    <!-- Mobile Toggle -->
+    <div class="nav-toggle" id="nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<!-- 🌐 NAVBAR END -->
+
+<!-- 🧱 MAIN CONTENT START -->
+<main class="main-content">
+  
+    <!-- ✅ Message Container (Global) -->
+  <div id="messageContainer" style="margin: 1rem 0;"></div>
+
+  <div class="content-wrapper">
+
+    <!-- 📊 DASHBOARD SECTION -->
+    <div id="home-section" class="section">
+      <div class="page-header">
+        <h1 class="page-title">Event Management Dashboard</h1>
+        <p class="page-subtitle">Manage events, attendees, venues, and organizers from one place</p>
+      </div>
+
+      <!-- Dashboard Stats -->
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number" id="totalEvents">0</div><div class="stat-label">Total Events</div></div>
+        <div class="stat-card"><div class="stat-number" id="totalAttendees">0</div><div class="stat-label">Total Attendees</div></div>
+        <div class="stat-card"><div class="stat-number" id="upcomingEvents">0</div><div class="stat-label">Upcoming Events</div></div>
+        <div class="stat-card"><div class="stat-number" id="activeVenues">0</div><div class="stat-label">Active Venues</div></div>
+      </div>
+
+      <!-- Quick Action Cards -->
+      <div class="page-header" style="margin-top:3rem"><h2 class="page-subtitle">Quick Actions</h2></div>
+
+      <div class="cards-grid">
+        <!-- 🎯 Manage Events -->
+        <div class="card">
+          <h3 class="card-title">🎯 Manage Events</h3>
+          <div class="button-container">
+            <button type="button" onclick="showSection('create-event-section')" class="card-action-btn event-btn">➕ Create</button>
+            <button type="button" onclick="openEventList()" class="card-action-btn event-btn">📋 View</button>
+            <button type="button" onclick="showSection('get-event-by-id-section')" class="card-action-btn event-btn">🔍 By ID</button>
+            <button type="button" onclick="showSection('update-event-by-id-section')" class="card-action-btn event-btn">🔁 Update</button>
+            <button type="button" onclick="showSection('delete-event-section')" class="card-action-btn">🗑️ Delete</button>
+            <button type="button" onclick="showSection('get-attendee-by-id-section')" class="card-action-btn event-btn">🧍 Attendee by ID</button>
+            <button type="button" onclick="showSection('get-organizer-by-id-section')" class="card-action-btn event-btn">👤 Organizer by ID</button>
+            <button type="button" onclick="showSection('get-events-pagination-sorting-section')" class="card-action-btn event-btn">↔️ Pagination</button>
+          </div>
+          <!-- <span class="card-badge">Event Control</span> -->
+        </div>
+
+        <!-- 🧾 Register Attendee -->
+        <div class="card">
+          <h3 class="card-title">🧾 Register</h3>
+          <div class="button-container">
+            <button type="button" onclick="showSection('register-attendee-section')" class="card-action-btn event-btn">➕ Register</button>
+            <button type="button" onclick="showSection('list-registrations-section'); getAllRegistrations();" class="card-action-btn event-btn">📋 All Registrations</button>
+            <button type="button" onclick="showSection('get-registration-by-id-section')" class="card-action-btn event-btn">🔍 By ID</button>
+            <button type="button" onclick="showSection('delete-registration-section')" class="card-action-btn">🗑️ Delete</button>
+            <button type="button" onclick="showSection('get-registration-by-event-section')" class="card-action-btn event-btn">🎫 By Event ID</button>
+            <button type="button" onclick="showSection('get-registration-by-attendee-section')" class="card-action-btn event-btn">🧍 By Attendee ID</button>
+          </div>
+          <!-- <span class="card-badge">Add Registration</span> -->
+        </div>
+
+        <!-- 👥 Manage Attendees -->
+        <div class="card">
+          <h3 class="card-title">👥 Manage Attendees</h3>
+          <div class="button-container">
+            <button type="button" onclick="showSection('add-attendee-section')" class="card-action-btn">➕ Add</button>
+            <button type="button" onclick="showSection('list-attendees-section'); loadAllAttendees()" class="card-action-btn">📋 View</button>
+            <button type="button" onclick="showSection('update-attendee-section')" class="card-action-btn">✏️ Update</button>
+            <button type="button" onclick="showSection('delete-attendee-section')" class="card-action-btn">🗑️ Delete</button>
+            <button type="button" onclick="showSection('get-attendee-by-id-section')" class="card-action-btn">🔍 Get by ID</button>
+            <button type="button" onclick="showSection('get-attendee-by-contact-section')" class="card-action-btn">📞 Get by Contact</button>
+            <button type="button" onclick="showSection('get-registrations-by-attendee-section')" class="card-action-btn">📝 Get Registrations</button>
+            <button type="button" onclick="showSection('attendee-pagination-section')" class="card-action-btn">↔️ Pagination</button>
+          </div>
+          <!-- <span class="card-badge">Attendee Control</span> -->
+        </div>
+
+        <!-- 🧑‍💼 Manage Organizers -->
+        <div class="card">
+          <h3 class="card-title">🧑‍💼 Manage Organizers</h3>
+          <div class="button-container">
+            <button type="button" onclick="showSection('add-organizer-section')" class="card-action-btn">➕ Add</button>
+            <button type="button" onclick="showSection('list-organizers-section'); getAllOrganizers()" class="card-action-btn">📋 View</button>
+            <button type="button" onclick="showSection('update-organizer-section')" class="card-action-btn">✏️ Update</button>
+            <button type="button" onclick="showSection('delete-organizer-section')" class="card-action-btn">🗑️ Delete</button>
+            <button type="button" onclick="showSection('get-organizer-by-id-section')" class="card-action-btn">🔍 Get by ID</button>
+            <button type="button" onclick="showSection('organizer-pagination-section')" class="card-action-btn">↔️ Pagination</button>
+          </div>
+          <!-- <span class="card-badge">Organizer Control</span> -->
+        </div>
+
+        <!-- 🏛️ Manage Venues -->
+        <div class="card">
+          <h3 class="card-title">🏛️ Manage Venues</h3>
+          <div class="button-container">
+            <button type="button" onclick="showSection('add-venue-section')" class="card-action-btn">➕ Add</button>
+            <button type="button" onclick="showSection('list-venues-section'); loadVenues()" class="card-action-btn">📋 View</button>
+            <button type="button" onclick="showSection('update-venue-section')" class="card-action-btn">✏️ Update</button>
+            <button type="button" onclick="showSection('delete-venue-section')" class="card-action-btn">🗑️ Delete</button>
+            <button type="button" onclick="showSection('get-venue-by-id-section')" class="card-action-btn">🔍 Get by ID</button>
+            <button type="button" onclick="showSection('events-by-venue-section')" class="card-action-btn">🎟️ Events by Venue</button>
+            <button type="button" onclick="showSection('events-by-location-section')" class="card-action-btn">📍 Events by Location</button>
+            <button type="button" onclick="showSection('venue-pagination-section')" class="card-action-btn">↔️ Pagination</button>
+          </div>
+          <!-- <span class="card-badge">Venue Control</span> -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 🎯 Manage Events form section started ..........................................  -->
+
+    <!-- 📝 CREATE EVENT SECTION -->
+    <section id="create-event-section" class="section hidden">
+      <div class="content-wrapper" style="position: relative;">
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <h2 class="page-title">Create or Edit Event</h2>
+        <form id="eventForm" class="form-container">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" required />
+          </div>
+          <div class="form-group">
+            <label for="eventDate">Event Date</label>
+            <input type="date" name="eventDate" id="eventDate" min="2025-08-20" required />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea name="description" id="description" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="venueId">Venue</label>
+            <select name="venueId" id="venueId" required>
+              <option value="">Select Venue</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="organizerId">Organizer</label>
+            <select name="organizerId" id="organizerId" required>
+              <option value="">Select Organizer</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Create Event</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 📋 List Events Section -->
+    <section id="list-events-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">All Events</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <div id="eventListContainer" class="cards-grid" style="margin-top:2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Get event by id -->
+    <section id="get-event-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔍 Get Event by ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <form id="getEventByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="eventIdInput">Event ID</label>
+            <input type="number" id="eventIdInput" required />
+          </div>
+          <button type="submit" class="submit-btn">Fetch Event</button>
+        </form>
+        <div id="eventByIdResult" class="cards-grid" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔁 Update Event by ID -->
+    <section id="update-event-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔁 Update Event</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <form id="updateEventByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="updateEventId">Event ID</label>
+            <input type="number" id="updateEventId" required />
+          </div>
+          <button type="submit" class="submit-btn">Load Event</button>
+        </form>
+
+        <!-- Show form for updating -->
+        <form id="eventUpdateForm" class="form-container hidden" style="margin-top:2rem;">
+          <div class="form-group">
+            <label for="updateTitle">Title</label>
+            <input type="text" id="updateTitle" required />
+          </div>
+          <div class="form-group">
+            <label for="updateEventDate">Event Date</label>
+            <input type="date" id="updateEventDate" min="2025-08-20" required />
+          </div>
+          <div class="form-group">
+            <label for="updateDescription">Description</label>
+            <textarea id="updateDescription" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="updateVenueId">Venue</label>
+            <select id="updateVenueId" required></select>
+          </div>
+          <div class="form-group">
+            <label for="updateOrganizerId">Organizer</label>
+            <select id="updateOrganizerId" required></select>
+          </div>
+          <button type="submit" class="submit-btn">Update Event</button>
+        </form>
+      </div>
+    </section>
+    
+    <!-- delete event -->
+    <section id="delete-event-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🗑️ Delete Event</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <form id="deleteEventForm" class="form-container">
+          <div class="form-group">
+            <label for="deleteEventId">Event ID</label>
+            <input type="number" id="deleteEventId" required />
+          </div>
+          <button type="submit" class="submit-btn danger">Delete Event</button>
+        </form>
+        <div id="deleteEventResult" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+     <!-- Attendee by id -->
+    <section id="get-attendee-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🧍 Get Attendee by ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <form id="getAttendeeByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="attendeeId">Attendee ID</label>
+            <input type="number" id="attendeeId" required />
+          </div>
+          <button type="submit" class="submit-btn">Get Attendee</button>
+        </form>
+        <div id="attendeeResult" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- organizer by id -->
+    <section id="get-organizer-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">👤 Get Organizer by ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <form id="getOrganizerByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="organizerId">Organizer ID</label>
+            <input type="number" id="organizerId" required />
+          </div>
+          <button type="submit" class="submit-btn">Get Organizer</button>
+        </form>
+        <div id="organizerResult" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Event by Pagination + Sorting -->
+    <section id="get-events-pagination-sorting-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📊 Events (Pagination + Sorting)</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <form id="getEventsPaginationForm" class="form-container">
+          <div class="form-group">
+            <label for="page">Page</label>
+            <input type="number" id="page" value="0" required />
+          </div>
+          <div class="form-group">
+            <label for="size">Page Size</label>
+            <input type="number" id="size" value="5" required />
+          </div>
+          <div class="form-group">
+            <label for="sortBy">Sort By</label>
+            <input type="text" id="sortBy" value="title" required />
+          </div>
+          <div class="form-group">
+            <label for="sortDir">Sort Direction</label>
+            <select id="sortDir">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Load Events</button>
+        </form>
+        <div id="eventsPaginationResult" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🎯 Manage Events form section ended ..........................................  -->
+    <!-- =============================================================================== -->
+
+
+
+    <!-- 🧾 Register Attendee form section started  .................................... -->
+
+
+    <!-- 🧾 REGISTER SECTION -->
+    <section id="register-attendee-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">Register</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="registrationForm" class="form-container">
+          <div class="form-group">
+            <label for="registrationDate">Registration Date</label>
+            <input type="date" id="registrationDate" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regEventIdSelect">Event</label>
+            <select id="regEventIdSelect" required>
+              <option value="">Select Event</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="regAttendeeIdSelect">Attendee</label>
+            <select id="regAttendeeIdSelect" required>
+              <option value="">Select Attendee</option>
+            </select>
+          </div>
+
+          <button type="submit" class="submit-btn">Register</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 📋 All Registrations Section -->
+    <section id="list-registrations-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📋 All Registrations</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <div id="registrationListContainer" class="cards-grid" style="margin-top:2rem">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔍 Get Registration by ID -->
+    <section id="get-registration-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔍 Get Registration by ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getRegistrationByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="registrationIdInput">Registration ID</label>
+            <input type="number" id="registrationIdInput" required />
+          </div>
+          <button type="submit" class="submit-btn">Fetch Registration</button>
+        </form>
+
+        <div id="registrationByIdResult" class="cards-grid" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔎 Get Registrations by Attendee ID  -->
+    <section id="get-registration-by-attendee-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔎 Get Registrations by Attendee ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getRegistrationByAttendeeForm" class="form-container">
+          <div class="form-group">
+            <label for="searchAttendeeIdForReg">Attendee ID</label>
+            <input type="number" id="searchAttendeeIdForReg" required />
+          </div>
+          <button type="submit" class="submit-btn">Fetch Registrations</button>
+        </form>
+
+        <div id="registrationByAttendeeResult" class="cards-grid" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔎 Get Registrations by Event ID -->
+    <section id="get-registration-by-event-section" class="section hidden">
+    <div class="content-wrapper">
+      <h2 class="page-title">🔎 Get Registrations by Event ID</h2>
+      <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+      <form id="getRegistrationByEventForm" class="form-container">
+        <div class="form-group">
+          <label for="searchEventIdForReg">Event ID</label>
+          <input type="number" id="searchEventIdForReg" required />
+        </div>
+        <button type="submit" class="submit-btn">Fetch Registrations</button>
+      </form>
+
+      <div id="registrationByEventResult" class="cards-grid" style="margin-top: 2rem;">
+        <div class="loading" style="display:none;">Loading...</div>
+      </div>
+    </div>
+    </section>
+
+    <!-- 🗑️ Delete Registration -->
+    <section id="delete-registration-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🗑️ Delete Registration</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="deleteRegistrationForm" class="form-container">
+          <div class="form-group">
+            <label for="deleteRegistrationId">Registration ID</label>
+            <input type="number" id="deleteRegistrationId" required />
+          </div>
+          <button type="submit" class="submit-btn danger">Delete</button>
+        </form>
+
+        <div id="deleteRegistrationResult" class="cards-grid" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 🧾 REGISTER SECTION -->
+    <section id="register-attendee-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">Register</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <form id="registrationForm" class="form-container">
+          <div class="form-group">
+            <label for="registrationDate">Registration Date</label>
+            <input type="date" name="registrationDate" id="registrationDate" min="2025-08-20" required />
+          </div>
+          <div class="form-group">
+            <label for="eventId">Event</label>
+            <select name="eventId" id="eventId" required>
+              <option value="">Select Event</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="attendeeId">Attendee</label>
+            <select name="attendeeId" id="attendeeId" required>
+              <option value="">Select Attendee</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Register</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 🧾 Register Attendee form section ended  .................................... -->
+    <!-- ============================================================================   -->
+
+
+
+    <!-- 👥 Manage Attendees  form start .............................................. -->
+
+    <!-- 👤 ADD ATTENDEE SECTION -->
+    <section id="add-attendee-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">➕ Add Attendee</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="attendeeForm" class="form-container">
+          <input type="hidden" id="attendeeId" name="id">
+
+          <div class="form-group">
+            <label for="attendeeName">Name:</label>
+            <input type="text" id="attendeeName" name="name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="attendeeEmail">Email:</label>
+            <input type="email" id="attendeeEmail" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="attendeeContact">Contact:</label>
+            <input type="number" id="attendeeContact" name="contact" required />
+          </div>
+
+          <button type="submit" class="submit-btn">💾 Save Attendee</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 📋 LIST ATTENDEES -->
+    <section id="list-attendees-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📋 Attendees List</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <div id="attendeeListContainer" class="cards-grid" style="margin-top:2rem">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔍 GET ATTENDEE BY ID SECTION -->
+    <section id="get-attendee-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔍 Get Attendee by ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getAttendeeByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="searchAttendeeId">Attendee ID:</label>
+            <input type="number" id="searchAttendeeId" name="id" required />
+          </div>
+          <button type="submit" class="card-action-btn">🔎 Search</button>
+        </form>
+
+        <div id="attendeeDetails" class="details-box hidden">
+          <!-- Search result will show here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ❌ DELETE ATTENDEE SECTION -->
+    <section id="delete-attendee-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">❌ Delete Attendee</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="deleteAttendeeForm" class="form-container">
+          <div class="form-group">
+            <label for="deleteAttendeeId">Attendee ID:</label>
+            <input type="number" id="deleteAttendeeId" name="id" required />
+          </div>
+          <button type="submit" class="card-action-btn delete-btn">🗑️ Delete</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ✏️ UPDATE ATTENDEE SECTION -->
+    <section id="update-attendee-section" class="section">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔁 Update Attendee</h2>
+
+        <!-- Load Attendee Form -->
+        <form id="loadAttendeeForm" class="form-container">
+          <div class="form-group">
+            <label for="loadAttendeeId">Attendee ID</label>
+            <input type="number" id="loadAttendeeId" required />
+          </div>
+          <button type="submit" class="submit-btn">Load Attendee</button>
+        </form>
+
+        <!-- Update Attendee Form -->
+        <form id="attendeeUpdateForm" class="form-container hidden" style="margin-top:2rem;">
+          <input type="hidden" id="updateAttendeeId" />
+
+          <div class="form-group">
+            <label for="updateAttendeeName">Name</label>
+            <input type="text" id="updateAttendeeName" required />
+          </div>
+
+          <div class="form-group">
+            <label for="updateAttendeeEmail">Email</label>
+            <input type="email" id="updateAttendeeEmail" required />
+          </div>
+
+          <div class="form-group">
+            <label for="updateAttendeeContact">Contact</label>
+            <input type="text" id="updateAttendeeContact" required />
+          </div>
+
+          <button type="submit" class="submit-btn">Update Attendee</button>
+        </form>
+      </div>
+    </section>
+
+
+    <!-- 📞 GET ATTENDEE BY CONTACT -->
+    <section id="get-attendee-by-contact-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📞 Get Attendee by Contact</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getAttendeeByContactForm" class="form-container">
+          <div class="form-group">
+            <label for="attendeeContactInput">Contact Number:</label>
+            <input type="number" id="attendeeContactInput" name="contact" required />
+          </div>
+          <button type="submit" class="card-action-btn">🔍 Search</button>
+        </form>
+
+        <div id="attendeeByContactContainer" class="details-box" style="margin-top:1rem;">
+          <!-- Results will appear here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 📝 GET REGISTRATIONS BY ATTENDEE -->
+    <section id="get-registrations-by-attendee-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📝 Get Registrations by Attendee</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getRegistrationsByAttendeeForm" class="form-container">
+          <div class="form-group">
+            <label for="registrationAttendeeId">Attendee ID:</label>
+            <input type="number" id="registrationAttendeeId" name="attendeeId" required />
+          </div>
+          <button type="submit" class="card-action-btn">📂 Fetch Registrations</button>
+        </form>
+
+        <div id="registrationsContainer" class="cards-grid" style="margin-top:1rem;">
+          <!-- Registrations will appear here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ↔️ ATTENDEE PAGINATION SECTION -->
+    <section id="attendee-pagination-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">↔️ Attendee Pagination</h2>
+
+        <form id="paginationForm" class="form-container">
+          <div class="form-group">
+            <label for="pageNumber">Page Number:</label>
+            <input type="number" id="pageNumber" value="0" min="0" required />
+          </div>
+
+          <div class="form-group">
+            <label for="pageSize">Page Size:</label>
+            <input type="number" id="pageSize" value="5" min="1" required />
+          </div>
+
+          <div class="form-group">
+            <label for="sortBy">Sort By:</label>
+            <select id="sortBy">
+              <option value="id">ID</option>
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="contact">Contact</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="sortOrder">Sort Order:</label>
+            <select id="sortOrder">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+
+          <button type="submit" class="card-action-btn">🔎 Load</button>
+        </form>
+
+        <div id="paginationResults" class="results"></div>
+
+        <div class="pagination-controls">
+          <button id="prevBtn" class="card-action-btn">⬅️ Prev</button>
+          <button id="nextBtn" class="card-action-btn">➡️ Next</button>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- 👥 Manage Attendees  form ended .............................................  -->
+    <!-- ==============================================================================  -->
+
+    <!-- Add Organizer Form Started ...................................................  -->
+    <!-- ➕ Add Organizer -->
+    <section id="add-organizer-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">➕ Add Organizer</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="organizerForm" class="form-container">
+          <div class="form-group">
+            <label for="organizerName">Name</label>
+            <input type="text" id="organizerName" required />
+          </div>
+          <div class="form-group">
+            <label for="organizerEmail">Email</label>
+            <input type="email" id="organizerEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="organizerOrganization">Organization</label>
+            <input type="text" id="organizerOrganization" required />
+          </div>
+          <button type="submit" class="submit-btn">Save Organizer</button>
+        </form>
+
+        <!-- ✅ Success / Error Message -->
+        <div id="organizerAddResult" style="margin-top: 1rem;"></div>
+      </div>
+    </section>
+
+
+    <!-- 📋 All Organizers -->
+    <section id="list-organizers-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📋 All Organizers</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+        <div id="organizerListContainer" class="cards-grid" style="margin-top:2rem">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ✏️ Update Organizer by ID -->
+    <section id="update-organizer-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔁 Update Organizer</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <!-- Step 1: Enter ID -->
+        <form id="getOrganizerForUpdateForm" class="form-container">
+          <div class="form-group">
+            <label for="loadOrganizerId">Organizer ID</label>
+            <input type="number" id="loadOrganizerId" required />
+          </div>
+          <button type="submit" class="submit-btn">Load Organizer</button>
+        </form>
+
+        <!-- Step 2: Update form (shown after loading) -->
+        <form id="organizerUpdateForm" class="form-container hidden" style="margin-top:2rem;">
+          <!-- यहाँ hidden id field -->
+          <input type="hidden" id="updateOrganizerId" />
+          <div class="form-group">
+            <label for="updateOrganizerName">Name</label>
+            <input type="text" id="updateOrganizerName" required />
+          </div>
+          <div class="form-group">
+            <label for="updateOrganizerEmail">Email</label>
+            <input type="email" id="updateOrganizerEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="updateOrganizerOrganization">Organization</label>
+            <input type="text" id="updateOrganizerOrganization" required />
+          </div>
+          <button type="submit" class="submit-btn">Update Organizer</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 🗑️ Delete Organizer -->
+    <section id="delete-organizer-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🗑️ Delete Organizer</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="deleteOrganizerForm" class="form-container">
+          <div class="form-group">
+            <label for="deleteOrganizerId">Organizer ID</label>
+            <input type="number" id="deleteOrganizerId" min="1" required />
+          </div>
+          <button type="submit" class="submit-btn danger">Delete Organizer</button>
+        </form>
+
+        <div id="deleteOrganizerResult" style="margin-top:2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 🔍 Get Organizer by ID -->
+    <section id="get-organizer-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔍 Get Organizer by ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getOrganizerByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="organizerIdInput">Organizer ID</label>
+            <input type="number" id="organizerIdInput" required />
+          </div>
+          <button type="submit" class="submit-btn">Fetch Organizer</button>
+        </form>
+
+        <div id="organizerByIdResult" class="cards-grid" style="margin-top:2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ↔️ Organizer Pagination -->
+    <section id="organizer-pagination-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">↔️ Organizers - Pagination & Sorting</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <!-- Pagination Form -->
+        <form id="organizerPaginationForm" class="form-container">
+          <div class="form-group">
+            <label for="organizerPageNumber">Page Number:</label>
+            <input type="number" id="organizerPageNumber" name="page" value="0" min="0" required />
+          </div>
+
+          <div class="form-group">
+            <label for="organizerPageSize">Page Size:</label>
+            <input type="number" id="organizerPageSize" name="size" value="5" min="1" required />
+          </div>
+
+          <div class="form-group">
+            <label for="organizerSortBy">Sort By:</label>
+            <select id="organizerSortBy" name="sortBy">
+              <option value="id">ID</option>
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="organization">Organization</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="organizerSortOrder">Sort Order:</label>
+            <select id="organizerSortOrder" name="sortOrder">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+
+          <button type="submit" class="card-action-btn">📊 Get Paginated Organizers</button>
+        </form>
+
+        <!-- Results -->
+        <div id="organizerPaginationResult" class="cards-grid" style="margin-top:2rem;">
+          <!-- Organizers will load here -->
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls" style="margin-top:1rem; text-align:center;">
+          <button id="orgPrevBtn" class="card-action-btn">⬅️ Previous</button>
+          <button id="orgNextBtn" class="card-action-btn">Next ➡️</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Add Organizer Form Started ...................................................  -->
+    <!-- ==============================================================================  -->
+
+
+    <!-- ➕ Add Venue -->
+    <section id="add-venue-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">➕ Add Venue</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="venueForm" class="form-container">
+          <div class="form-group">
+            <label for="venueName">Venue Name</label>
+            <input type="text" id="venueName" required />
+          </div>
+          <div class="form-group">
+            <label for="venueLocation">Location</label>
+            <input type="text" id="venueLocation" required />
+          </div>
+          <div class="form-group">
+            <label for="venueCapacity">Capacity</label>
+            <input type="number" id="venueCapacity" required />
+          </div>
+          <button type="submit" class="submit-btn">Save Venue</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 📋 All Venues -->
+    <section id="list-venues-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📋 All Venues</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+       <div id="venueListContainer" class="cards-grid" style="margin-top:2rem">
+        <div class="loading" style="display:none;">Loading...</div>
+           <ul id="venueList"></ul>   <!-- 👈 Add this -->
+       </div>
+      </div>
+    </section>
+
+    <!-- ✏️ Update Venue -->
+ 
+    <section id="update-venue-section" class="section">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔁 Update Venue</h2>
+
+        <!-- Load Venue Form -->
+        <form id="loadVenueForm" class="form-container">
+          <div class="form-group">
+            <label for="loadVenueId">Venue ID</label>
+            <input type="number" id="loadVenueId" required />
+          </div>
+          <button type="submit" class="submit-btn">Load Venue</button>
+        </form>
+
+        <!-- Update Venue Form -->
+        <form id="venueUpdateForm" class="form-container hidden" style="margin-top:2rem;">
+          <input type="hidden" id="updateVenueId" />
+          <div class="form-group">
+            <label for="updateVenueName">Venue Name</label>
+            <input type="text" id="updateVenueName" required />
+          </div>
+          <div class="form-group">
+            <label for="updateVenueLocation">Location</label>
+            <input type="text" id="updateVenueLocation" required />
+          </div>
+          <div class="form-group">
+            <label for="updateVenueCapacity">Capacity</label>
+            <input type="number" id="updateVenueCapacity" required />
+          </div>
+          <button type="submit" class="submit-btn">Update Venue</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 🗑️ Delete Venue -->
+
+    <section id="delete-venue-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🗑️ Delete Venue</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="deleteVenueForm" class="form-container">
+          <div class="form-group">
+            <label for="deleteVenueId">Venue ID</label>
+            <input type="number" id="deleteVenueId" min="1" required />
+          </div>
+          <button type="submit" class="submit-btn danger">Delete</button>
+        </form>
+
+        <div id="deleteVenueResult" style="margin-top: 2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔍 Get Venue by ID -->
+    <section id="get-venue-by-id-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🔍 Get Venue by ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getVenueByIdForm" class="form-container">
+          <div class="form-group">
+            <label for="searchVenueId">Venue ID</label>
+            <input type="number" id="searchVenueId" required />
+          </div>
+          <button type="submit" class="submit-btn">Fetch Venue</button>
+        </form>
+
+        <div id="venueByIdResult" class="cards-grid" style="margin-top:2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🎪 Get Events by Venue ID -->
+    <section id="events-by-venue-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">🎪 Events by Venue ID</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getEventsByVenueForm" class="form-container">
+          <div class="form-group">
+            <label for="searchEventsVenueId">Venue ID</label>
+            <input type="number" id="searchEventsVenueId" required />
+          </div>
+          <button type="submit" class="submit-btn">Fetch Events</button>
+        </form>
+
+        <div id="eventsByVenueResult" class="cards-grid" style="margin-top:2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📍 Get Events by Location -->
+    <section id="events-by-location-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">📍 Events by Location</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="getEventsByLocationForm" class="form-container">
+          <div class="form-group">
+            <label for="searchLocation">Location</label>
+            <input type="text" id="searchLocation" required />
+          </div>
+          <button type="submit" class="submit-btn">Fetch Events</button>
+        </form>
+
+        <div id="eventsByLocationResult" class="cards-grid" style="margin-top:2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ↔️ Venue Pagination -->
+    <section id="venue-pagination-section" class="section hidden">
+      <div class="content-wrapper">
+        <h2 class="page-title">↔️ Venues - Pagination & Sorting</h2>
+        <button type="button" onclick="goBack()" class="card-action-btn back-btn">Back</button>
+
+        <form id="venuePaginationForm" class="form-container">
+          <div class="form-group">
+            <label for="venuePageNumber">Page Number</label>
+            <input type="number" id="venuePageNumber" min="0" value="0" required />
+          </div>
+          <div class="form-group">
+            <label for="venuePageSize">Page Size</label>
+            <input type="number" id="venuePageSize" min="1" value="5" required />
+          </div>
+          <div class="form-group">
+            <label for="venueSortField">Sort Field</label>
+            <input type="text" id="venueSortField" placeholder="e.g. id, name, location, capacity" value="id" required />
+          </div>
+          <div class="form-group">
+            <label for="venueSortOrder">Sort Order</label>
+            <select id="venueSortOrder">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Fetch Venues</button>
+        </form>
+
+        <div id="venuePaginationResult" class="cards-grid" style="margin-top:2rem;">
+          <div class="loading" style="display:none;">Loading...</div>
+        </div>
+
+        <div class="pagination-controls" style="margin-top:1rem; text-align:center;">
+          <button id="venuePrevBtn" class="card-action-btn">⬅️ Previous</button>
+          <button id="venueNextBtn" class="card-action-btn">Next ➡️</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ✅ Toast Notifications Container -->
+    <div id="toastContainer" style="position:fixed;top:20px;right:20px;z-index:9999;"></div>
+
+  </div>
+</main>
+<!-- 🧱 MAIN CONTENT END -->
+
+<!-- 🔻 FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-content">
+      <!-- About -->
+      <div class="footer-section">
+        <h3>🎪 EventHub</h3>
+        <p>Your comprehensive event management solution.</p>
+        <div class="social-links">
+          <a href="https://facebook.com/eventhub" class="social-link">📘</a>
+          <a href="https://twitter.com/eventhub" class="social-link">🐦</a>
+          <a href="https://instagram.com/eventhub" class="social-link">📷</a>
+          <a href="https://linkedin.com/company/eventhub" class="social-link">💼</a>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="footer-section">
+        <h3>Features</h3>
+        <ul>
+          <li><a href="#" onclick="showSection('create-event-section')">Event Creation</a></li>
+          <li><a href="#" onclick="showSection('register-attendee-section')">Attendee Management</a></li>
+          <li><a href="#" onclick="showSection('add-venue-section')">Venue Coordination</a></li>
+          <li><a href="#">Analytics & Reports</a></li>
+          <li><a href="#" onclick="showSection('home-section')">Real-time Updates</a></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="https://help.eventhub.com">Help Center</a></li>
+          <li><a href="https://docs.eventhub.com">Documentation</a></li>
+          <li><a href="https://api.eventhub.com">API Reference</a></li>
+          <li><a href="mailto:support@eventhub.com">Contact Support</a></li>
+          <li><a href="https://forum.eventhub.com">Community Forum</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p>📧 support@eventhub.com</p>
+        <p>📱 +1 (555) 123-4567</p>
+        <p>🏢 123 Event Street, Suite 100</p>
+        <p>🌍 New York, NY 10001</p>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="footer-bottom">
+      <p>&copy; 2025 EventHub. All rights reserved. | <a href="https://eventhub.com/privacy">Privacy Policy</a> | <a href="https://eventhub.com/terms">Terms of Service</a></p>
+    </div>
+  </div>
+</footer>
+<!-- 🔻 FOOTER END -->
+
+<!-- 🔗 JAVASCRIPT FILES -->
+<script src="../JavaSc/common.js"></script>
+<script src="../JavaSc/navigation.js"></script>
+<script src="../JavaSc/dashboard.js"></script>
+<script src="../JavaSc/event.js"></script>
+<script src="../JavaSc/attendee.js"></script>
+<script src="../JavaSc/organizer.js"></script>
+<script src="../JavaSc/venue.js"></script>
+<script src="../JavaSc/register.js"></script>
+
+</body>
+</html>
